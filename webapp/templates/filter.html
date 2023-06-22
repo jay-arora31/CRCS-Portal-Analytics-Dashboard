@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static%}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<style>
+    .filter-box {
+        width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+    </style>
+<div class="page-heading">
+ <body style="background-color: rgb(251, 247, 247);">
+    <div class="box container" style="background-color: rgba(241, 241, 241, 0.862);">
+    <div class="card container" style=" border: transparent; background-color: rgba(241, 241, 241, 0.862);">
+        <div class="row">
+            <div class="col-md-12">
+                <form method="GET">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="form-group" style="margin-top: 15px;">
+                            <label for="search_query">Search by Name/Address:</label>
+                            <input type="text" class="form-control" name="search_query" placeholder="Search" value="{{ search_query }}">
+                        </div>
+                        </div>
+                        <div class="col-md-1" style="margin-top: 45px;">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group" style="margin-top: 15px;">
+                                <label for="search_query">                Select State
+                                </label>
+                                <div class="dropdown">
+                                    <button class="custom-select font-size-14 btn  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Select states
+                                    </button>
+                                    <div class="  dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height: 200px; overflow-y: auto;">
+                                        {% for i in states %}
+                                        <div class="form-check">
+                                            &nbsp;  <input class="form-check-input checkvalues" type="checkbox" name="sector_state[]" {% if i in sector_state %}checked{% endif %} value="{{i}}" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1">
+                                                {{i}}
+                                            </label>
+                                        </div>
+                                        {% endfor%}
+                                    </div>
+                                </div>                          </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" style="margin-top: 15px;">
+                                <label for="search_query">                Select District
+                                </label>
+                                <div class="dropdown">
+                                    <button class="custom-select font-size-14 btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Select District
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height: 200px; overflow-y: auto;">
+                                        {% for i in districts %}
+                                        <div class="form-check">
+                                            &nbsp;  <input class="form-check-input checkvalues" type="checkbox" name="sector_district[]" {% if i in sector_district %}checked{% endif %} value="{{i}}" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1">
+                                                {{i}}
+                                            </label>
+                                        </div>
+                                        {% endfor%}
+                                    </div>
+                                </div>                            </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" style="margin-top: 15px;">
+                                <label for="search_query">Select Area of Operation</label>
+                                <div class="dropdown">
+                                    <button class="btn custom-select  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Select Area of Operation
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height: 200px; overflow-y: auto;">
+                                        {% for i in areas %}
+                                        <div class="form-check">
+                                            &nbsp;  <input class="form-check-input checkvalues" type="checkbox" name="sector_area_of_operation[]" {% if i in sector_area_of_operation %}checked{% endif %} value="{{i}}" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1">
+                                                {{i}}
+                                            </label>
+                                        </div>
+                                        {% endfor%}
+                                    </div>
+                                </div>               </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" style="margin-top: 15px;">
+                                <label for="search_query">Select Sectors</label>
+                                <div class="dropdown">
+                                    <button class="btn custom-select  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select Sectors        </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height: 200px; overflow-y: auto;">
+                                        {% for i in sector_types %}
+                                        <div class="form-check">
+                                            &nbsp;  <input class="form-check-input checkvalues" type="checkbox" name="sector_sector_type[]"  {% if i in sector_sector_type %}checked{% endif %} value="{{i}}" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1">
+                                                {{i}}
+                                            </label>
+                                        </div>
+                                        {% endfor%}
+                                    </div>
+                                </div>                       </div>
+                            </div>
+                       
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    
+        <!-- <div class="form-group">
+            <label for="sector_registration_start_date">Registration Start Date:</label>
+            <input type="date" class="form-control" name="sector_registration_start_date" value="{{ sector_registration_start_date }}">
+        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        
+        <div class="form-group">
+            <label for="sector_registration_end_date">Registration End Date:</label>
+            <input type="date" class="form-control" name="sector_registration_end_date" value="{{ sector_registration_end_date }}">
+        </div> -->
+                                    </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="float: right; margin-bottom: 20px;">Apply Filters</button>
+                                        {% if clearfilter %}
+                                        <a href="{% url 'your_view' %}"></a>
+                                        {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <div class="tabb">
+        <table class="table align-middle mb-0 bg-white">
+            <thead class="bg-light">
+              <tr>
+                <th>Society Name</th>
+                <th>State</th>
+                <th>District</th>
+                <th>View Info</th>
+              
+              </tr>
+            </thead>
+            <tbody>
+                {% for obj in objects %}
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center">
+                  
+                    <div class="ms-3">
+                      <p class="fw-bold mb-1">{{ obj.sector_name }}</p>
+                    </div>
+                  </div>
+                </td>
+              
+                <td>
+                    <p class="fw-bold mb-1">{{ obj.sector_state }}</p>
+
+                </td>
+                <td>
+                    <p class="fw-bold mb-1">{{ obj.sector_district }}</p>
+
+                </td>
+                <td>
+                  <button type="button" class="btn btn-link btn-sm btn-rounded">
+                    view_info
+                  </button>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                  <td colspan="3">No results found.</td>
+              </tr>
+          {% endfor %}
+            </tbody>
+          </table>
+    </div>
+    <div class="pagination">
+        <span class="step-links">
+            {% if objects.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ objects.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current-page">{{ objects.number }}</span>
+    
+            {% if objects.has_next %}
+                <a href="?page={{ objects.next_page_number }}">next</a>
+                <a href="?page={{ objects.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+ </body>
+    
+{% endblock %}
+{% block js %}
+<!-- Need: Apexcharts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="assets/extensions/apexcharts/apexcharts.min.js"></script>
+<script src="assets/static/js/pages/dashboard.js"></script>
+{% endblock %}

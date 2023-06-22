@@ -1,0 +1,890 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static%}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'Chart/chart.js'  %}"></script>
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script src="https://d3js.org/d3-geo.v2.min.js"></script>
+<script src="https://unpkg.com/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<div class="page-heading">
+    <style>
+        .card1{
+            width: 400px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+        }
+
+        .tab-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .tab-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #eee;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .tab-item.active {
+            background-color: #ccc;
+            color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+     <script>
+        function changeTab(tabIndex) {
+            var tabItems = document.getElementsByClassName('tab-item');
+            var tabContents = document.getElementsByClassName('tab-content');
+
+            for (var i = 0; i < tabItems.length; i++) {
+                tabItems[i].classList.remove('active');
+                tabContents[i].classList.remove('active');
+            }
+
+            tabItems[tabIndex].classList.add('active');
+            tabContents[tabIndex].classList.add('active');
+        }
+    </script>
+    <h3>Dashboard</h3>
+
+    <style>
+        .chart-container {
+          width: 100%; /* Set initial width to 100% */
+          max-width: 500px; /* Set a maximum width to maintain visibility on larger screens */
+        }
+      
+        @media (max-width: 767px) {
+          .chart-container {
+            max-width: 100%; /* Set the maximum width to 100% for smaller screens */
+          }
+        }
+      </style>
+      
+</div>
+<div class="page-content"> 
+    <section class="row">
+        <div class="col-12 col-lg-12">
+            <div class="row">
+                <div class="col-6 col-lg-2 col-md-6">
+                    <div class="card">
+                        <div class="card-body px-4 py-4-5">
+                            <div class="row">
+                                <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                    <div class=" mb-2">
+                                        <img src="{% static 'population.png' %}" alt="">
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                                    <h6 class="text-muted font-semibold">Total Society</h6>
+                                    <h6 class="font-extrabold mb-0">{{tot_society}}</h6>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2 col-md-6">
+                    <div class="card"> 
+                        <div class="card-body px-4 py-4-5">
+                            <div class="row">
+                                <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                    <div class=" mb-2">
+                                       <img src="{% static 'state.png' %}" alt="">
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                                    <h6 class="text-muted font-semibold">Total States</h6>
+                                    <h6 class="font-extrabold mb-0">{{tot_state}}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          
+                
+                <div class="col-6 col-lg-2 col-md-6">
+                    <div class="card">
+                        <div class="card-body px-4 py-4-5">
+                            <div class="row">
+                                <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                    <div class="stats-icon green mb-2">
+                                        <img src="{% static 'state.png' %}" alt="">
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                                    <h6 class="text-muted font-semibold">Total District</h6>
+                                    <h6 class="font-extrabold mb-0">44</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body px-4 py-4-5">
+                            <div class="row">
+                                <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                    <div class="stats-icon green mb-2">
+                                        <img src="{% static 'sector.png' %}" alt="" width="50px">
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                                    <h6 class="text-muted font-semibold">Total Sectors</h6>
+                                    <h6 class="font-extrabold mb-0">13</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body px-4 py-4-5">
+                            <div class="row">
+                                <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                    <div class="stats-icon red mb-2">
+                                        <img src="{% static 'city.png' %}" alt="" width="50px">
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
+                                    <h6 class="text-muted font-semibold">Total Area of operation</h6>
+                                    <h6 class="font-extrabold mb-0">{{distinct_area}}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6 order-md-1 order-last">
+                    <!-- <h3>ChartJS</h3> -->
+                    <!-- #<p class="text-subtitle text-muted">A chart says more than a thousand words.</p> -->
+                </div>
+         
+            </div>
+            </div>
+            <section class="section">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">MSCS Yearly and Monthly Registration Data</h4>
+                         
+                                <div class="row">
+                                  <div class="col-md-5 offset-md-7">
+                                    <select class="form-select" id="barmonth" aria-label="Responsive Select Dropdown">
+                                      <option selected>All Year</option>
+                                      {% for i in years %}
+                                      <option value="{{i}}">{{i}}</option>
+                                     {% endfor %}
+                                    </select>
+                                  </div>
+                                </div>
+                             
+                            
+                        </div>
+                        <div class="card-body">
+                            <div style="width: 100%; max-width: 600px;">
+                                <canvas id="registrationChart1" style="max-width: 100%; height: auto;"></canvas>
+                            </div>
+                         
+                        </div> <script>
+                            $(document).ready(function() {
+                           var chart;
+                       
+                           // Fetch the initial chart data using AJAX
+                           $.ajax({
+                               url: "{% url 'Barchart' %}",
+                               type: "GET",
+                               dataType: "json",
+                               success: function(response) {
+                                   var chartLabels = response.labels;
+                                   var chartValues = response.data;
+                       
+                                   var ctx = document.getElementById('registrationChart1').getContext('2d');
+                                   chart = new Chart(ctx, {
+                                       type: 'line',
+                                       data: {
+                                           labels: chartLabels,
+                                           datasets: [{
+                                               label: 'Total Year of Registration',
+                                               data: chartValues,
+                                               backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                               borderColor: 'rgba(75, 192, 192, 1)',
+                                               borderWidth: 1
+                                           }]
+                                       },
+                                       options: {
+                                           scales: {
+                                               y: {
+                                                   beginAtZero: true,
+                                                   precision: 0
+                                               }
+                                           }
+                                       }
+                                   });
+                       
+                                   $('#barmonth').on('change', function() {
+                                       var selectedValue = $(this).val();
+                                       var selectedYear = parseInt(selectedValue);
+                                       
+                                       if (selectedYear !== '') {
+                                           var url = "{% url 'barch' %}";
+                       
+                                           if (selectedYear === -1) {
+                                               // Yearly data, use line chart
+                                               url = "{% url 'Barchart' %}";
+                                           }
+                                           
+                                           $.ajax({
+                                               url: url,
+                                               type: 'GET',
+                                               data: { year: selectedYear },
+                                               success: function(response) {
+                                                   var updatedChartLabels = response.labels;
+                                                   var updatedChartValues = response.data;
+                                                   var chartType = selectedYear === -1 ? 'line' : 'bar';
+                                                   var chartOptions = {
+                                                       scales: {
+                                                           y: {
+                                                               beginAtZero: true,
+                                                               precision: 0
+                                                           }
+                                                       }
+                                                   };
+                       
+                                                   if (chartType === 'bar') {
+                                                       chartOptions.indexAxis = 'x';
+                                                       chartOptions.barThickness = 25; // Set the desired bar thickness
+                                                   }
+                       
+                                                   chart.config.type = chartType;
+                                                   chart.data.labels = updatedChartLabels;
+                                                   chart.data.datasets[0].data = updatedChartValues;
+                                                   chart.options = chartOptions;
+                                                   chart.update();
+                                               },
+                                               error: function(xhr, status, error) {
+                                                   console.error(error);
+                                               }
+                                           });
+                                       }
+                                   });
+                               },
+                               error: function(xhr, status, error) {
+                                   console.error(error);
+                               }
+                           });
+                       });
+                       
+                           </script>
+                       
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">MSCS Sector Distribution</h4>
+                         
+                             
+                             
+                            
+                        </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="mscsPieChart"></canvas>
+                                  </div>
+                                  
+                                    <script>
+                                        $(document).ready(function() {
+                                            $.ajax({
+                                                url: "{% url 'mscs_sector_pie_chart' %}",
+                                                type: "GET",
+                                                dataType: "json",
+                                                success: function(response) {
+                                                    var chartLabels = response.labels;
+                                                    var chartData = response.data;
+                                
+                                                    // Create the pie chart
+                                                    var ctx = document.getElementById('mscsPieChart').getContext('2d');
+                                                    var chart = new Chart(ctx, {
+                                                        type: 'pie',
+                                                        data: {
+                                                            labels: chartLabels,
+                                                            datasets: [{
+                                                                data: chartData,
+                                                                backgroundColor: [
+    '#e6194b',
+    '#3cb44b',
+    '#ffe119',
+    '#4363d8',
+    '#f58231',
+    '#911eb4',
+    '#46f0f0',
+    '#f032e6',
+    '#bcf60c',
+    '#fabebe',
+    '#008080',
+    '#e6beff',
+    '#9a6324',
+    '#fffac8',
+    '#800000',
+    '#aaffc3',
+    '#808000',
+    '#ffd8b1',
+    '#000075',
+    '#808080',
+    '#ffffff',
+    '#000000',
+    '#ffd700',
+    '#008000',
+    '#800080',
+    '#0000ff',
+    '#00ff00',
+    '#ff00ff',
+    '#00ffff',
+    '#7f0000',
+    '#7f007f',
+    '#007f00',
+    '#7f7f00',
+    '#00007f',
+    '#7f7f7f',
+    '#ff4500',
+    '#daa520',
+    '#adff2f',
+    '#32cd32',
+    '#ff69b4',
+    '#00bfff',
+    '#ff7f50',
+    '#cd5c5c',
+    '#4b0082',
+    '#ffdab9',
+    '#d2691e'
+    // Add more colors if needed
+]
+
+
+                                                            }]
+                                                        },
+                                                        options: {
+                                                    responsive: true,
+                                                    maintainAspectRatio: false,
+                                                    plugins: {
+                                                        legend: {
+                                                            position: 'left',
+                                                            align: 'start'
+                                                        },
+                                                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.label || '';
+                                    var value = context.raw || 0;
+                                    var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    var percentage = Math.round((value / total) * 100);
+                                    return label + ': ' + percentage + '%';
+                                }
+                            }
+                        }
+                                                    }
+                                                }
+                                            });
+                                        },
+                                                error: function(xhr, status, error) {
+                                                    console.error(error);
+                                                }
+                                            });
+                                        });
+                                    </script>
+                            </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Percentage Distribution of MSCS Across States</h4>
+                         
+                             
+                             
+                            
+                        </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="mscsStatePercentageChart"></canvas>
+                                  </div>
+                                  
+                                    <script>
+                                       $(document).ready(function() {
+    // Fetch the chart data using AJAX
+    $.ajax({
+        url: "{% url 'mscs_state_percentage_chart' %}",
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            var chartLabels = response.labels;
+            var chartData = response.data;
+
+            var ctx = document.getElementById('mscsStatePercentageChart').getContext('2d');
+        
+            var chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        data: chartData,
+                        backgroundColor: [
+    '#e6194b',
+    '#3cb44b',
+    '#ffe119',
+    '#4363d8',
+    '#f58231',
+    '#911eb4',
+    '#46f0f0',
+    '#f032e6',
+    '#bcf60c',
+    '#fabebe',
+    '#008080',
+    '#e6beff',
+    '#9a6324',
+    '#fffac8',
+    '#800000',
+    '#aaffc3',
+    '#808000',
+    '#ffd8b1',
+    '#000075',
+    '#808080',
+    '#ffffff',
+    '#000000',
+    '#ffd700',
+    '#008000',
+    '#800080',
+    '#0000ff',
+    '#00ff00',
+    '#ff00ff',
+    '#00ffff',
+    '#7f0000',
+    '#7f007f',
+    '#007f00',
+    '#7f7f00',
+    '#00007f',
+    '#7f7f7f',
+    '#ff4500',
+    '#daa520',
+    '#adff2f',
+    '#32cd32',
+    '#ff69b4',
+    '#00bfff',
+    '#ff7f50',
+    '#cd5c5c',
+    '#4b0082',
+    '#ffdab9',
+    '#d2691e'
+    // Add more colors if needed
+]
+
+
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.label || '';
+                                    var value = context.raw || 0;
+                                    var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    var percentage = Math.round((value / total) * 100);
+                                    return label + ': ' + percentage + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+});
+    
+                                    </script>
+                            </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Percentage Distribution of MSCS Across District</h4>
+                         
+                             
+                             
+                            
+                        </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="mscsdisPercentageChart"></canvas>
+                                  </div>
+                                  
+                                    <script>
+                                       $(document).ready(function() {
+    // Fetch the chart data using AJAX
+    $.ajax({
+        url: "{% url 'mscs_district_percentage_chart' %}",
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            var chartLabels = response.labels;
+            var chartData = response.data;
+
+            var ctx = document.getElementById('mscsdisPercentageChart').getContext('2d');
+        
+            var chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        data: chartData,
+                        backgroundColor: [
+    '#e6194b',
+    '#3cb44b',
+    '#ffe119',
+    '#4363d8',
+    '#f58231',
+    '#911eb4',
+    '#46f0f0',
+    '#f032e6',
+    '#bcf60c',
+    '#fabebe',
+    '#008080',
+    '#e6beff',
+    '#9a6324',
+    '#fffac8',
+    '#800000',
+    '#aaffc3',
+    '#808000',
+    '#ffd8b1',
+    '#000075',
+    '#808080',
+    '#ffffff',
+    '#000000',
+    '#ffd700',
+    '#008000',
+    '#800080',
+    '#0000ff',
+    '#00ff00',
+    '#ff00ff',
+    '#00ffff',
+    '#7f0000',
+    '#7f007f',
+    '#007f00',
+    '#7f7f00',
+    '#00007f',
+    '#7f7f7f',
+    '#ff4500',
+    '#daa520',
+    '#adff2f',
+    '#32cd32',
+    '#ff69b4',
+    '#00bfff',
+    '#ff7f50',
+    '#cd5c5c',
+    '#4b0082',
+    '#ffdab9',
+    '#d2691e'
+    // Add more colors if needed
+]
+
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                           
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.label || '';
+                                    var value = context.raw || 0;
+                                    var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    var percentage = Math.round((value / total) * 100);
+                                    return label + ': ' + percentage + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+});
+    
+                                    </script>
+                            </div>
+                    </div>
+                </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Cumulative Registrations by Sector Over Time</h4>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="stacked-area-chart"></canvas>
+
+                            <script>
+                          
+                          $(document).ready(function() {
+                              // Function to create the stacked area chart
+                              function createChart(chartData) {
+                                  var ctx = document.getElementById('stacked-area-chart').getContext('2d');
+                                  var stackedAreaChart = new Chart(ctx, {
+                                      type: 'line',
+                                      data: chartData,
+                                      options: {
+                                          // Add any additional chart options here
+                                      }
+                                  });
+                              }
+                          
+                              // Function to fetch chart data via AJAX
+                              function fetchChartData() {
+                                  $.ajax({
+                                      url: "{% url 'stacked_area_chart_data_sector' %}",
+                                      type: 'GET',
+                                      dataType: 'json',
+                                      success: function(response) {
+                                          // Define an array of colors
+                                          var colors = [
+                                                 '#fabebe',
+                              '#008080',
+                              '#e6beff',
+                              '#9a6324',
+                              '#fffac8',
+                              '#800000',
+                              '#aaffc3',
+                          
+                              '#7f007f',
+                              '#007f00',
+                              '#7f7f00',
+                              '#00007f',
+                              '#7f7f7f',
+                              '#ff4500',
+                              '#daa520',
+                              '#adff2f',
+                              '#32cd32',
+                              '#ff69b4',
+                              '#00bfff',
+                              '#ff7f50',
+                              '#cd5c5c',
+                              '#4b0082',
+                              '#ffdab9',
+                              '#d2691e'
+                                              // Add more colors as needed
+                                          ];
+                          
+                                          // Assign a color to each dataset
+                                          var datasets = response.datasets;
+                                          for (var i = 0; i < datasets.length; i++) {
+                                              datasets[i].backgroundColor = colors[i % colors.length];
+                                              datasets[i].borderColor = colors[i % colors.length];
+                                          }
+                          
+                                          // Create the stacked area chart
+                                          createChart(response);
+                                      },
+                                      error: function(xhr, status, error) {
+                                          console.log('Error:', error);
+                                      }
+                                  });
+                              }
+                          
+                              // Call the function to fetch chart data
+                              fetchChartData();
+                          });
+                          
+                          
+                            </script>
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Number of Registrations Over Time By State</h4>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="stacked-area-chart1"></canvas>
+
+                            <script>
+                          
+                          $(document).ready(function() {
+                              // Function to create the stacked area chart
+                              function createChart(chartData) {
+                                  var ctx = document.getElementById('stacked-area-chart1').getContext('2d');
+                                  var stackedAreaChart = new Chart(ctx, {
+                                      type: 'line',
+                                      data: chartData,
+                                      options: {
+                                          // Add any additional chart options here
+                                      }
+                                  });
+                              }
+                          
+                              // Function to fetch chart data via AJAX
+                              function fetchChartData() {
+                                  $.ajax({
+                                      url: "{% url 'stacked_area_chart_data_state' %}",
+                                      type: 'GET',
+                                      dataType: 'json',
+                                      success: function(response) {
+                                          // Define an array of colors
+                                          var colors = [
+                                                 '#fabebe',
+                              '#008080',
+                              '#e6beff',
+                              '#9a6324',
+                              '#fffac8',
+                              '#800000',
+                              '#aaffc3',
+                          
+                              '#7f007f',
+                              '#007f00',
+                              '#7f7f00',
+                              '#00007f',
+                              '#7f7f7f',
+                              '#ff4500',
+                              '#daa520',
+                              '#adff2f',
+                              '#32cd32',
+                              '#ff69b4',
+                              '#00bfff',
+                              '#ff7f50',
+                              '#cd5c5c',
+                              '#4b0082',
+                              '#ffdab9',
+                              '#d2691e'
+                                              // Add more colors as needed
+                                          ];
+                          
+                                          // Assign a color to each dataset
+                                          var datasets = response.datasets;
+                                          for (var i = 0; i < datasets.length; i++) {
+                                              datasets[i].backgroundColor = colors[i % colors.length];
+                                              datasets[i].borderColor = colors[i % colors.length];
+                                          }
+                          
+                                          // Create the stacked area chart
+                                          createChart(response);
+                                      },
+                                      error: function(xhr, status, error) {
+                                          console.log('Error:', error);
+                                      }
+                                  });
+                              }
+                          
+                              // Call the function to fetch chart data
+                              fetchChartData();
+                          });
+                          
+                          
+                            </script>
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Number of Registrations Over Time By State</h4>
+                        </div>
+                        <script src="https://code.highcharts.com/highcharts.js"></script>
+                        <script src="https://code.highcharts.com/modules/treemap.js"></script>
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                        <div class="card-body">
+                          
+                            <div id="chart-container"></div>
+
+    <script>
+    $(document).ready(function() {
+        $.ajax({
+            url: "{% url 'treemap_data' %}",
+            method: "GET",
+            success: function(data) {
+                renderTreemap(data);
+            }
+        });
+    });
+
+    function renderTreemap(data) {
+        Highcharts.chart('chart-container', {
+            series: [{
+                type: 'treemap',
+                layoutAlgorithm: 'squarified',
+                data: data,
+                allowDrillToNode: true,
+                levelIsConstant: false,
+                levels: [{
+                    level: 1,
+                    dataLabels: {
+                        enabled: true,
+                        style: {
+                            fontSize: '15px'
+                        }
+                    }
+                }],
+                tooltip: {
+                    pointFormat: '<b>{point.name}</b>: {point.value}'
+                },
+            }],
+            title: {
+                text: 'Treemap Chart: Registered MSCS by Sectors and Subsectors'
+            }
+        });
+    }
+    </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+    
+{% endblock %}
+{% block js %}
+<!-- Need: Apexcharts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="assets/extensions/apexcharts/apexcharts.min.js"></script>
+<script src="assets/static/js/pages/dashboard.js"></script>
+{% endblock %}
