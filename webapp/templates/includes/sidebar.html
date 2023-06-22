@@ -5,8 +5,7 @@
         <div class="sidebar-header">
             <div class="d-flex justify-content-between">
                 <div class="logo">
-                    <img src="{% static 'assets/images/logo/logo.png' %}" alt="Logo" srcset="">
-                </div>
+CRCS Portal                </div>
                 <div class="toggler">
                     <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
                 </div>
@@ -21,29 +20,15 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li class="sidebar-item has-sub">
-                    <a href="#" class="sidebar-link">
-                        <i class="bi bi-stack"></i>
-                        <span>Components</span>
+                <li class="sidebar-item  {% if request.resolver_match.url_name == 'your_view' %} active {% endif %}">
+                    <a href="{% url 'your_view' %}" class='sidebar-link'>
+                        <i class="bi bi-grid-fill"></i>
+                        <span>Filter Dashboard</span>
                     </a>
-                    <ul class="submenu" style="display: none;">
-                        <li class="submenu-item">
-                            <a href="#">Your Own</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="#">Your Own</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="#">Your Own</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="#">Your Own</a>
-                        </li>
-                    </ul>
                 </li>
             </ul>
         </div>
-        <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
+       
     </div>
 </div>
 <div id="main">

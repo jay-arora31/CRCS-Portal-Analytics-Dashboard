@@ -67,6 +67,7 @@
     </script>
     <h3>Dashboard</h3>
 
+      
     <style>
         .chart-container {
           width: 100%; /* Set initial width to 100% */
@@ -535,118 +536,201 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">Percentage Distribution of MSCS Across District</h4>
+                            <h4 class="card-title">Total Count of Registration Across State</h4>
+                            <h5 class="card-title">Total Registrations:  100</h5>
                          
                              
-                             
+                
                             
                         </div>
                             <div class="card-body">
                                 <div class="chart-container">
-                                    <canvas id="mscsdisPercentageChart"></canvas>
+                                    {% for state, count in sector_state_counts.items %}
+                                    <button class="btn btn-primary" style="margin-bottom: 10px;" id="btn-{{ forloop.counter }}">
+                                        {{ state }} ({{ count }})
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        {% endfor %}
+
+        <script>
+            function getRandomColor() {
+                var colors = ['#FF5733', '#FFBD33', '#33FF5E', '#336EFF', '#AD33FF', '#FF33F5', '#33FFE2', '#FF3333', '#33FFCE', '#FF8333', '#33FFA4', '#D133FF', '#FF33A4', '#33FF87', '#FF33D8', '#33FFB5', '#FFB733', '#3351FF', '#FF33CC', '#33FFCC'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            var buttons = document.querySelectorAll('.btn-primary');
+            buttons.forEach(function(button) {
+                button.style.backgroundColor = getRandomColor();
+            });
+        </script>
+                                      
+                                    
+                                    
+                                    
                                   </div>
                                   
-                                    <script>
-                                       $(document).ready(function() {
-    // Fetch the chart data using AJAX
-    $.ajax({
-        url: "{% url 'mscs_district_percentage_chart' %}",
-        type: "GET",
-        dataType: "json",
-        success: function(response) {
-            var chartLabels = response.labels;
-            var chartData = response.data;
-
-            var ctx = document.getElementById('mscsdisPercentageChart').getContext('2d');
-        
-            var chart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: chartLabels,
-                    datasets: [{
-                        data: chartData,
-                        backgroundColor: [
-    '#e6194b',
-    '#3cb44b',
-    '#ffe119',
-    '#4363d8',
-    '#f58231',
-    '#911eb4',
-    '#46f0f0',
-    '#f032e6',
-    '#bcf60c',
-    '#fabebe',
-    '#008080',
-    '#e6beff',
-    '#9a6324',
-    '#fffac8',
-    '#800000',
-    '#aaffc3',
-    '#808000',
-    '#ffd8b1',
-    '#000075',
-    '#808080',
-    '#ffffff',
-    '#000000',
-    '#ffd700',
-    '#008000',
-    '#800080',
-    '#0000ff',
-    '#00ff00',
-    '#ff00ff',
-    '#00ffff',
-    '#7f0000',
-    '#7f007f',
-    '#007f00',
-    '#7f7f00',
-    '#00007f',
-    '#7f7f7f',
-    '#ff4500',
-    '#daa520',
-    '#adff2f',
-    '#32cd32',
-    '#ff69b4',
-    '#00bfff',
-    '#ff7f50',
-    '#cd5c5c',
-    '#4b0082',
-    '#ffdab9',
-    '#d2691e'
-    // Add more colors if needed
-]
-
-                    }]
-                },
-                options: {
-                    plugins: {
-                        legend: {
-                            position: 'right'
-                           
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    var label = context.label || '';
-                                    var value = context.raw || 0;
-                                    var total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    var percentage = Math.round((value / total) * 100);
-                                    return label + ': ' + percentage + '%';
+                                   
+                            </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Percentage Distribution of MSCS Across District</h4>
+                             
+                                 
+                                 
+                                
+                            </div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="mscsdisPercentageChart"></canvas>
+                                      </div>
+                                      
+                                        <script>
+                                           $(document).ready(function() {
+        // Fetch the chart data using AJAX
+        $.ajax({
+            url: "{% url 'mscs_district_percentage_chart' %}",
+            type: "GET",
+            dataType: "json",
+            success: function(response) {
+                var chartLabels = response.labels;
+                var chartData = response.data;
+    
+                var ctx = document.getElementById('mscsdisPercentageChart').getContext('2d');
+            
+                var chart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: chartLabels,
+                        datasets: [{
+                            data: chartData,
+                            backgroundColor: [
+        '#e6194b',
+        '#3cb44b',
+        '#ffe119',
+        '#4363d8',
+        '#f58231',
+        '#911eb4',
+        '#46f0f0',
+        '#f032e6',
+        '#bcf60c',
+        '#fabebe',
+        '#008080',
+        '#e6beff',
+        '#9a6324',
+        '#fffac8',
+        '#800000',
+        '#aaffc3',
+        '#808000',
+        '#ffd8b1',
+        '#000075',
+        '#808080',
+        '#ffffff',
+        '#000000',
+        '#ffd700',
+        '#008000',
+        '#800080',
+        '#0000ff',
+        '#00ff00',
+        '#ff00ff',
+        '#00ffff',
+        '#7f0000',
+        '#7f007f',
+        '#007f00',
+        '#7f7f00',
+        '#00007f',
+        '#7f7f7f',
+        '#ff4500',
+        '#daa520',
+        '#adff2f',
+        '#32cd32',
+        '#ff69b4',
+        '#00bfff',
+        '#ff7f50',
+        '#cd5c5c',
+        '#4b0082',
+        '#ffdab9',
+        '#d2691e'
+        // Add more colors if needed
+    ]
+    
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                position: 'right'
+                               
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        var label = context.label || '';
+                                        var value = context.raw || 0;
+                                        var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        var percentage = Math.round((value / total) * 100);
+                                        return label + ': ' + percentage + '%';
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
-        },
-        error: function(xhr, status, error) {
-            console.error(error);
-        }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
     });
-});
-    
-                                    </script>
-                            </div>
+        
+                                        </script>
+                                </div>
+                        </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Total Registration of MSCS Across District</h4>
+                                <h6 class="card-title">Total Registration : 100</h6>
+                             
+                                 
+                                 
+                                
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    {% for state, count in sector_state_counts_dict_dis.items %}
+                                    <button class="btn btn-primary btn-sm"  style="margin-bottom: 3px;" id="btn-{{ forloop.counter }}">
+                                        {{ state }} ({{ count }})
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        {% endfor %}
+
+        <script>
+            function getRandomColor() {
+                var colors = ['#FF5733', '#FFBD33', '#33FF5E', '#336EFF', '#AD33FF', '#FF33F5', '#33FFE2', '#FF3333', '#33FFCE', '#FF8333', '#33FFA4', '#D133FF', '#FF33A4', '#33FF87', '#FF33D8', '#33FFB5', '#FFB733', '#3351FF', '#FF33CC', '#33FFCC'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            var buttons = document.querySelectorAll('.btn-primary');
+            buttons.forEach(function(button) {
+                button.style.backgroundColor = getRandomColor();
+            });
+        </script>
+                                      
+                                    
+                                    
+                                    
+                                  </div>
+                                  
+                                   
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             <div class="row">
                 <div class="col-12">

@@ -5,6 +5,7 @@ import numpy as np
 import json
 from django.http import JsonResponse
 from django.db.models import Sum
+import itertools
 
 # Create your views here.
 
@@ -15,7 +16,6 @@ def home(request):
 
     ##=====================Getting Totals of column distinct value=============================================##
     tot_society=data.count()
-    print(tot_society)
     df1 = CooperativeSociety.objects.all().values()
     df = pd.DataFrame.from_records(df1)
     total_society = df.shape[0]
@@ -57,12 +57,37 @@ def home(request):
     years = countss.index.astype(str).tolist()
     
     ##==================================End 
+
+    sector_state_counts = CooperativeSociety.objects.exclude(sector_state=None).values('sector_state').annotate(count=Count('sector_state'))
+
+    # Convert the queryset to a pandas DataFrame
+    df = pd.DataFrame.from_records(sector_state_counts)
+
+    # Convert the DataFrame to a dictionary
+    sector_state_counts_dict = df.set_index('sector_state')['count'].to_dict()
+    print(sector_state_counts_dict)
+    sector_state_dis = CooperativeSociety.objects.exclude(sector_district__isnull=True).values('sector_district').annotate(count=Count('sector_district'))
+    df12 = pd.DataFrame.from_records(sector_state_dis)
+    sector_state_counts_dict_dis = df12.set_index('sector_district')['count'].to_dict()
+
+
+    colors = [
+        '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF',
+        '#FF00FF', '#800000', '#008000', '#000080', '#808000',
+        '#800080', '#008080', '#808080', '#FFA500', '#FFC0CB',
+        '#FFB6C1', '#FFD700', '#ADFF2F', '#00FF7F', '#87CEEB'
+    ]
+    color_cycle = itertools.cycle(colors)
+
     data_dict={
         'tot_society':total_society,
         'tot_state':tot_state,
         'tot_district':tot_district,
         'distinct_area':distinct_area,
-        'years':years
+        'years':years,
+        'sector_state_counts':sector_state_counts_dict,
+        'color_cycle':color_cycle,
+        'sector_state_counts_dict_dis':sector_state_counts_dict_dis
          }
 
     return render(request,'home.html',data_dict)
@@ -85,10 +110,7 @@ def Barchart(request):
     # Prepare the data for Chart.js
     chart_labels = counts.index.astype(str).tolist()
     chart_values = counts.values.tolist()
-    print("=======================")
-    print(type(chart_labels))
-    print(type(chart_values))
-    print("=======================")
+
     data = {
         'labels': chart_labels,
         'data': chart_values,
@@ -101,7 +123,6 @@ import numpy as np
 def barch(request):
     if request.GET.get('year', None) is not None:
         year = request.GET.get('year')
-        print("Getting Year", year)
         queryset = CooperativeSociety.objects.values('sector_registration_date')
         # Convert the queryset to a pandas DataFrame
         df = pd.DataFrame.from_records(queryset)
@@ -190,7 +211,6 @@ def mscs_sector_pie_chart(request):
         'labels': labels,
         'data': data
     }
-    print(chart_data)
     
     return JsonResponse(chart_data)
 
@@ -341,7 +361,6 @@ def stacked_area_chart_data_state(request):
         chart_data['datasets'].append(dataset)
     
    
-    print(chart_data['datasets'].pop())
     return JsonResponse(chart_data)
 
 
@@ -385,9 +404,7 @@ def your_view(request):
     sector_sector_type = request.GET.getlist('sector_sector_type[]')
     sector_registration_start_date = request.GET.get('sector_registration_start_date')
     sector_registration_end_date = request.GET.get('sector_registration_end_date')
-    print("Hey",sector_district)
-    print("Hey",sector_state)
-    print("Hey",sector_area_of_operation)
+
     # Perform filtering based on the selected values
     queryset = CooperativeSociety.objects.all()
 
@@ -413,15 +430,17 @@ def your_view(request):
         queryset = queryset.filter(sector_registration_date__lte=sector_registration_end_date)
 
     # Pagination
-    paginator = Paginator(queryset, 10)  # Assuming 10 objects per page
+    paginator = Paginator(queryset, 5)  # Assuming 10 objects per page
     page_number = request.GET.get('page')
     objects = paginator.get_page(page_number)
 
     # Retrieve distinct values for filter options
     states = CooperativeSociety.objects.values_list('sector_state', flat=True).distinct()
-    districts = CooperativeSociety.objects.values_list('sector_district', flat=True).distinct()
+    districts = CooperativeSociety.objects.exclude(sector_district__isnull=True).values_list('sector_district', flat=True).distinct()
+    sector_types = CooperativeSociety.objects.exclude(sector_sector_type__isnull=True).values_list('sector_sector_type', flat=True).distinct()
+
     areas = CooperativeSociety.objects.values_list('sector_area_of_operation', flat=True).distinct()
-    sector_types = CooperativeSociety.objects.values_list('sector_sector_type', flat=True).distinct()
+
 
     # Prepare context data
     context = {
